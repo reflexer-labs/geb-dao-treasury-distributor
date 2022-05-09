@@ -140,7 +140,7 @@ contract GebDaoTreasuryDistributor is GebAuth, GebMath {
      * @notice Distributes funds available on the DAO treasury according to preset weights
      */
     function distributeFunds() external {
-        uint totalAmount = getLeftoverToSpend();
+        uint totalAmount = treasury.delegateLeftoverToSpend();
         require(totalAmount > 0, "GebDaoTreasuryDistributor/no-balance");
         uint currentTarget = uint256(lastTarget);
 
@@ -148,14 +148,5 @@ contract GebDaoTreasuryDistributor is GebAuth, GebMath {
             treasury.delegateTransferERC20(address(currentTarget), multiply(totalAmount, targetWeights[address(currentTarget)]) / totalWeight);
             (, currentTarget) = targetList.prev(currentTarget);
         }
-    }
-
-    /**
-     * @notice Returns allowance currently available
-     */
-    function getLeftoverToSpend() public view returns (uint256) {
-        return treasury.epochStart() + treasury.epochLength() < now ?
-            treasury.delegateAllowance() :
-            treasury.delegateLeftoverToSpend();
     }
 }
