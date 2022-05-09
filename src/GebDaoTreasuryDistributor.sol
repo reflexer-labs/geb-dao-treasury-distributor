@@ -29,16 +29,19 @@ contract GebDaoTreasuryDistributor is GebAuth, GebMath {
     // --- State vars ---
     // maximum amount of targets (constant)
     uint256 public constant maxTargets = 5;
-    // GebDaoMinimalTreasury
-    GebDaoMinimalTreasuryLike public treasury;
     // Total distribution weight
     uint256 public totalWeight;
-    // Mapping of target weights used for distribution
-    mapping (address => uint256) public targetWeights;
-    // List of targets
-    LinkedList.List internal targetList;
     // Last target on the list
     address public lastTarget;
+
+    // GebDaoMinimalTreasury
+    GebDaoMinimalTreasuryLike public treasury;
+
+    // Mapping of target weights used for distribution
+    mapping (address => uint256) public targetWeights;
+
+    // List of targets
+    LinkedList.List internal targetList;
 
     // --- Events ---
     event TargetAdded(address target, uint256 weight, uint256 totalWeight);
@@ -62,8 +65,9 @@ contract GebDaoTreasuryDistributor is GebAuth, GebMath {
 
         treasury = GebDaoMinimalTreasuryLike(treasuryAddress);
 
-        for (uint256 i; i < targets.length; i++)
+        for (uint256 i; i < targets.length; i++) {
             addTarget(targets[i], weights[i]);
+        }
     }
 
     // --- Admin functions ---
@@ -122,7 +126,7 @@ contract GebDaoTreasuryDistributor is GebAuth, GebMath {
     }
 
     /**
-     * @notice Transfer any token from treasury to dst (admin only)
+     * @notice Transfer any token from the distributor to dst (admin only)
      * @param token The address of the token to be transferred
      * @param dst The address to transfer tokens to
      * @param amount The amount of tokens to transfer
@@ -133,7 +137,7 @@ contract GebDaoTreasuryDistributor is GebAuth, GebMath {
 
     // --- Distribution logic ---
     /**
-     * @notice Distributes funds available on the treasury according to preset weights
+     * @notice Distributes funds available on the DAO treasury according to preset weights
      */
     function distributeFunds() external {
         uint totalAmount = treasury.delegateLeftoverToSpend();
